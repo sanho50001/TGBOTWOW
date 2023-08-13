@@ -1,4 +1,3 @@
-class User:
+fn = int(input('первое число: '))
 
-    def __init__(self):
-        self.user_id = ''
+print(int(str(fn)[:1]))

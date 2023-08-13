@@ -4,4 +4,4 @@
 pip install -r requirements.txt 
 
 
-> Чтобы запустить бота, нужно зайти в папку BOT > main и там запустить main.py
+> Чтобы запустить бота нужно запустить main.py
