@@ -20,26 +20,28 @@ TGBOT = CommandsTelegram(bot)
 @bot.message_handler(commands=["reg"])
 def reg(message):
     if wowgame:
-        wowgame.User().set_id_account(message.from_user.id)
+        wowgame.user.set_id_account(message.from_user.id)
     bot.send_message(message.from_user.id, 'Начинаем процесс регистрации...')
     started = wowgame.Start()
     started.cret(message.from_user.id)
 
+
 # Хендлер старта
 @bot.message_handler(commands=['start'])
 def start(message):
-    print(wowgame.user.get_id_account())
-    print(settings.get_language())
+    """Обработчик комманды /start"""
     if wowgame:
         wowgame.user.set_id_account(message.from_user.id)
     print(f'Чат ID: {message.chat.id} | {message.from_user.first_name} {message.from_user.last_name}: {message.text}')
     wowgame.StartGame().welcom(message=message)
 
+
 # хендлер принимающий любой вид текста которые не прошли проверку на команду
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
+    """Обработчик всех сообщений"""
     if wowgame:
-        wowgame.User().set_id_account(message.from_user.id)
+        wowgame.user.set_id_account(message.from_user.id)
     TGBOT.getTextMessages(message=message)
 
 
@@ -77,6 +79,7 @@ def callback_data(call):
 
     elif call.data == 'history':
         pass
+
 
 # Вечный пуллинг, чтобы бот принимал всегда сообщения
 bot.polling(none_stop=True, interval=0)
