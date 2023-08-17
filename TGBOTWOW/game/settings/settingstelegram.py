@@ -1,4 +1,8 @@
 from telebot import types
+from settings_game import Settings
+
+
+settings = Settings()
 
 
 # Класс команд телеграмма.
@@ -23,10 +27,20 @@ class CommandsTelegram:
 
         if message.text == "text":
             self.bot.send_message(message.from_user.id, 'text')
+
+
+
+
         elif message.text == "/help":
-            self.bot.send_message(message.from_user.id, "Команды", reply_markup=markup_reply)
+            if settings.get_language() == 'english':
+                self.bot.send_message(message.from_user.id, "Commands", reply_markup=markup_reply)
+            else:
+                self.bot.send_message(message.from_user.id, "Команды", reply_markup=markup_reply)
         else:
-            self.bot.send_message(message.from_user.id, 'Извините, я вас не совсем понимаю.')
+            if settings.get_language() == 'english':
+                self.bot.send_message(message.from_user.id, "Sorry. I do not understand", reply_markup=markup_reply)
+            else:
+                self.bot.send_message(message.from_user.id, 'Извините, я вас не совсем понимаю.')
 
     # Обработчик сообщений. Срабатывает когда сообщение не прошло проверку на команду
     def getTextMessages(self, message):
