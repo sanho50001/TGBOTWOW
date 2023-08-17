@@ -1,8 +1,6 @@
 from telebot import types
-from settings_game import Settings
-
-
-settings = Settings()
+import wowgame
+from game.settings.settings_game import settings
 
 
 # Класс команд телеграмма.
@@ -28,8 +26,9 @@ class CommandsTelegram:
         if message.text == "text":
             self.bot.send_message(message.from_user.id, 'text')
 
-
-
+        elif message.text == "/settings":
+            wowgame.user.set_id_account(message.from_user.id)
+            wowgame.BeginningStart().beginning(message)
 
         elif message.text == "/help":
             if settings.get_language() == 'english':

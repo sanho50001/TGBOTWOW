@@ -5,7 +5,7 @@ import telebot
 from game.settings.settingstelegram import CommandsTelegram
 from game.armor import Armor
 from game.weapon import Weapon
-from game.settings.settings_game import Settings
+from game.settings.settings_game import settings
 from game.battle import Battle
 from game.loot import Loot
 from game.movement import Movement
@@ -15,30 +15,26 @@ from game.tranquility import Tranquility
 from game.db_commands import DataBase
 from telebot import types
 
-
-class Bot:
-    """Класс Бота для работы с телеграммом"""
-    def __init__(self, bot_api):
-        self.bot_api = bot_api
-
-    def get_bot_api(self):
-        return self.bot_api
-
 # Инициализация бота и его комманд
 bot = telebot.TeleBot('5824374073:AAEfAlM2tCZzknjkol1_NKyPnzfaMYI31BE')
 TGBOT = CommandsTelegram(bot)
-# Инициализация настроек
-settings = Settings()
 
 # Инициализация Базы Данных
 db = DataBase()
 
+
 class User:
-    def __init__(self, id_account):
+    def __init__(self):
+        self.id_account = None
+
+    def set_id_account(self, id_account):
         self.id_account = id_account
-        pass
+
+    def get_id_account(self):
+        return self.id_account
     pass
 
+user = User()
 
 # class ClassHero:
 #     def __init__(self):
@@ -57,7 +53,15 @@ class User:
 
 class BeginningStart:
 
+    def r2(self, message):
+        # exp = db.Get_Hero()
+        #
+        # bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
+        pass
+
+
     def beginning(self, message):
+        print(message)
 
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
@@ -75,8 +79,8 @@ class BeginningStart:
             types.InlineKeyboardButton(text='Русский язык', callback_data='ru'),
             types.InlineKeyboardButton(text='English language', callback_data='eng'),
         )
-        bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
-        bot.send_message(message.from_user.id, 'Commands', reply_markup=markup_inline)
+        bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
+        bot.send_message(user.get_id_account(), 'Commands', reply_markup=markup_inline)
 
 
 class StartGame:
@@ -186,13 +190,15 @@ class Hero(User):
 
 
 class CreatingHero:
-    def __init__(self):
-        self.name_hero = ''
-        self.classes = []
-
-        pass
 
     def welcom_step_creating_hero(self, message):
+        # Если язык пользователем установлен 'english', то берется английская адаптация
+        if settings.get_language() == 'english':
+
+            bot.send_message(message.from_user.id, '')
+        # Если язык пользователем установлен 'русский', то берется русская адаптация
+        else:
+            bot.send_message(message.from_user.id, 'Комманды')
         bot.send_message(message.from_user.id, 'text')
 
     def one_step_creating_hero(self, message):
