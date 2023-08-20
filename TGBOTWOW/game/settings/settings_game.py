@@ -20,6 +20,33 @@ class Settings:
         else:
             return f'Welcom in Text Roly Game on world RustyForge\nCreating...'
 
+    def text_on_welcom_step_one_creating_hero(self):
+        if self.get_language() == 'русский':
+            return 'Классы\n'\
+                   'Воин\n'\
+                   'Охотник\n'\
+                   'Паладин\n'\
+                   'Разбойник\n'\
+                   'Жрец\n'\
+                   'Шаман\n'\
+                   'Маг\n'\
+                   'Чернокнижник\n'\
+                   'Друид\n'\
+                   'Рыцарь Смерти'
+        else:
+            return 'Classes\n' \
+                   'Warrior\n' \
+                   'Hunter\n'\
+                   'Paladin\n'\
+                   'Rogue\n'\
+                   'Priest\n'\
+                   'Shaman\n'\
+                   'Mage\n'\
+                   'Warlock\n'\
+                   'Druid\n'\
+                   'Death Knight'
+
+
 # Инициализация настроек
 settings = Settings()
 

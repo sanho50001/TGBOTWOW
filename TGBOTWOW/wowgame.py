@@ -1,7 +1,6 @@
 import random
 import time
 import datetime
-import telebot
 from game.settings.settingstelegram import CommandsTelegram
 from game.armor import Armor
 from game.weapon import Weapon
@@ -13,11 +12,8 @@ from game.potion import Potion
 from game.tavern import Tavern
 from game.tranquility import Tranquility
 from game.db_commands import DataBase
+from main import bot
 from telebot import types
-
-# Инициализация бота и его комманд
-bot = telebot.TeleBot('5824374073:AAEfAlM2tCZzknjkol1_NKyPnzfaMYI31BE')
-TGBOT = CommandsTelegram(bot)
 
 # Инициализация Базы Данных
 db = DataBase()
@@ -59,9 +55,7 @@ class BeginningStart:
         # bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
         pass
 
-
-    def beginning(self, message):
-        print(message)
+    def beginning_settings(self, message):
 
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
@@ -111,8 +105,8 @@ class StartGame:
                 types.InlineKeyboardButton(text='settings', callback_data='settings'),
             )
 
-            bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
-            bot.send_message(message.from_user.id, 'Commands', reply_markup=markup_inline)
+            bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Commands', reply_markup=markup_inline)
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
             markup_inline.add(
@@ -120,8 +114,8 @@ class StartGame:
                 types.InlineKeyboardButton(text='зарегистрировать героя', callback_data='reghero'),
             types.InlineKeyboardButton(text='настройки', callback_data='settings'),
             )
-            bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
-            bot.send_message(message.from_user.id, 'Комманды', reply_markup=markup_inline)
+            bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Комманды', reply_markup=markup_inline)
 
 
 #
@@ -176,33 +170,141 @@ class NPC:
 
 class Hero(User):
     """Класс Героя"""
-    def __init__(self, name_hero, classes):
-        super().__init__(id_account='')
-        self.name_hero = name_hero
-        self.classes = classes
+    def __init__(self):
+        super().__init__()
+        self.name_hero = ''  # имя персонажа
+        self.classes = '' #класс героя
         self.status = 'Online'
         self.health = 100
         # self.armor = Armor()
         # self.backpack = Backpack()
         # self.left_hand = LeftHand()
         # self.right_hand = RightHand()
-    pass
+
+    def set_name_hero(self, name_hero):
+        self.name_hero = name_hero
+
+    def set_classes_hero(self, classes):
+        self.classes = classes
+
+    def get_name_hero(self):
+        return self.name_hero
+
+    def get_classes_hero(self):
+        return self.classes
+
+
+hero = Hero()
 
 
 class CreatingHero:
 
-    def welcom_step_creating_hero(self, message):
+    def welcom_step_one_creating_hero(self, message):
+        hero.set_name_hero(message.from_user.text)
+
+        # вызов метода создания кнопки
+        markup_reply = types.ReplyKeyboardMarkup()
+        markup_inline = types.InlineKeyboardMarkup()
+
         # Если язык пользователем установлен 'english', то берется английская адаптация
         if settings.get_language() == 'english':
+            # кнопки eng
+            eng_classes_warrior = types.KeyboardButton('Warrior')
+            eng_classes_hunter = types.KeyboardButton('Hunter')
+            eng_classes_paladin = types.KeyboardButton('Paladin')
+            eng_classes_rogue = types.KeyboardButton('Rogue')
+            eng_classes_priest = types.KeyboardButton('Priest')
+            eng_classes_shaman = types.KeyboardButton('Shaman')
+            eng_classes_mage = types.KeyboardButton('Mage')
+            eng_classes_warlock = types.KeyboardButton('Warlock')
+            eng_classes_druid = types.KeyboardButton('Druid')
+            eng_classes_death_knight = types.KeyboardButton('Death Knight')
 
-            bot.send_message(message.from_user.id, '')
+            # создание кнопки и добавление туда кнопок.
+            markup_reply.add(
+                eng_classes_warrior,
+                eng_classes_hunter,
+                eng_classes_paladin,
+                eng_classes_rogue,
+                eng_classes_priest,
+                eng_classes_shaman,
+                eng_classes_mage,
+                eng_classes_warlock,
+                eng_classes_druid,
+                eng_classes_death_knight,
+            )
+
+            markup_inline.add(
+                types.InlineKeyboardButton(text='Warrior', callback_data='warrior'),
+                types.InlineKeyboardButton(text='Hunter', callback_data='hunter'),
+                types.InlineKeyboardButton(text='Paladin', callback_data='paladin'),
+                types.InlineKeyboardButton(text='Rogue', callback_data='rogue'),
+                types.InlineKeyboardButton(text='Priest', callback_data='prist'),
+                types.InlineKeyboardButton(text='Shaman', callback_data='shaman'),
+                types.InlineKeyboardButton(text='Mage', callback_data='mage'),
+                types.InlineKeyboardButton(text='Warlock', callback_data='warlock'),
+                types.InlineKeyboardButton(text='Druid', callback_data='druid'),
+                types.InlineKeyboardButton(text='Death Knight', callback_data='dk'),
+            )
+
+            hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
+            bot.send_message(user.get_id_account(), settings.text_on_welcom_step_one_creating_hero(), reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Choice class or write', reply_markup=markup_inline)
+
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
-            bot.send_message(message.from_user.id, 'Комманды')
-        bot.send_message(message.from_user.id, 'text')
+            # кнопки ру
+            ru_classes_warrior = types.KeyboardButton('Воин')
+            ru_classes_hunter = types.KeyboardButton('Охотник')
+            ru_classes_paladin = types.KeyboardButton('Паладин')
+            ru_classes_rogue = types.KeyboardButton('Разбойник')
+            ru_classes_priest = types.KeyboardButton('Жрец')
+            ru_classes_shaman = types.KeyboardButton('Шаман')
+            ru_classes_mage = types.KeyboardButton('Маг')
+            ru_classes_warlock = types.KeyboardButton('Чернокнижник')
+            ru_classes_druid = types.KeyboardButton('Друид')
+            ru_classes_death_knight = types.KeyboardButton('Рыцарь Смерти')
+
+            # создание кнопки и добавление туда кнопок.
+            markup_reply.add(
+                ru_classes_warrior,
+                ru_classes_hunter,
+                ru_classes_paladin,
+                ru_classes_rogue,
+                ru_classes_priest,
+                ru_classes_shaman,
+                ru_classes_mage,
+                ru_classes_warlock,
+                ru_classes_druid,
+                ru_classes_death_knight,
+            )
+
+            markup_inline.add(
+                types.InlineKeyboardButton(text='Warrior', callback_data='warrior'),
+                types.InlineKeyboardButton(text='Hunter', callback_data='hunter'),
+                types.InlineKeyboardButton(text='Paladin', callback_data='paladin'),
+                types.InlineKeyboardButton(text='Rogue', callback_data='rogue'),
+                types.InlineKeyboardButton(text='Priest', callback_data='prist'),
+                types.InlineKeyboardButton(text='Shaman', callback_data='shaman'),
+                types.InlineKeyboardButton(text='Mage', callback_data='mage'),
+                types.InlineKeyboardButton(text='Warlock', callback_data='warlock'),
+                types.InlineKeyboardButton(text='Druid', callback_data='druid'),
+                types.InlineKeyboardButton(text='Death Knight', callback_data='dk'),
+            )
+
+            hero.set_name_hero(message.from_user.text)  # Установка имени персонажа
+            bot.send_message(user.get_id_account(),
+                             settings.text_on_welcom_step_one_creating_hero(),
+                             reply_markup=markup_reply)
+
+            bot.send_message(user.get_id_account(),
+                             'Выберите класс героя или напишите его.',
+                             reply_markup=markup_inline)
+
+        bot.send_message(user.get_id_account(), 'text')
 
     def one_step_creating_hero(self, message):
-        bot.send_message(message.from_user.id, 'text')
+        bot.send_message(user.get_id_account(), 'text')
 
         pass
     pass

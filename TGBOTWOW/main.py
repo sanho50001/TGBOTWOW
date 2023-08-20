@@ -57,16 +57,16 @@ def callback_data(call):
 
     elif call.data == 'reghero':
         if settings.get_language() == 'english':
-            bot.send_message(wowgame.User().get_id_account(), 'Enter the name of the character')
+            bot.send_message(wowgame.user.get_id_account(), 'Enter the name of the character')
             bot.register_next_step_handler(call.message,
-                                           wowgame.CreatingHero().welcom_step_creating_hero(message=call.message))
+                                           wowgame.CreatingHero().welcom_step_one_creating_hero(message=call.message.from_user))
         else:
-            bot.send_message(wowgame.User().get_id_account(), 'Введите имя персонажа')
+            bot.send_message(wowgame.user.get_id_account(), 'Введите имя персонажа')
             bot.register_next_step_handler(call.message,
-                                           wowgame.CreatingHero().welcom_step_creating_hero(message=call.message))
+                                           wowgame.CreatingHero().welcom_step_one_creating_hero(message=call.message.from_user))
 
     elif call.data == 'settings':
-        wowgame.BeginningStart().beginning(call.message.from_user)
+        wowgame.BeginningStart().beginning_settings(call.message.from_user)
 
     elif call.data == 'ru':
         settings.set_language('русский')
