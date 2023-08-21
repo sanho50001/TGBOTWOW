@@ -33,7 +33,7 @@ def start(message):
     if wowgame:
         wowgame.user.set_id_account(message.from_user.id)
     print(f'Чат ID: {message.chat.id} | {message.from_user.first_name} {message.from_user.last_name}: {message.text}')
-    wowgame.StartGame().welcom(message=message)
+    wowgame.startgame.welcom(message=message)
 
 
 # хендлер принимающий любой вид текста которые не прошли проверку на команду
@@ -52,9 +52,11 @@ def callback_data(call):
     """Функция callback_data перехвата всех вызовов которые возникают при нажатии inline кнопок
     Принимает все вызовы перехватом и проходит по условию, если условие сошлось - переходит дальше по фукнциям
     """
+    # Вызов старта игры
     if call.data == 'startgame':
-        wowgame.StartGame()
+        wowgame.startgame.welcom()
 
+    # Вызов регистрации героя
     elif call.data == 'reghero':
         if settings.get_language() == 'english':
             bot.send_message(wowgame.user.get_id_account(), 'Enter the name of the character')
@@ -64,10 +66,11 @@ def callback_data(call):
             bot.send_message(wowgame.user.get_id_account(), 'Введите имя персонажа')
             bot.register_next_step_handler(call.message,
                                            wowgame.CreatingHero().welcom_step_one_creating_hero(message=call.message.from_user))
-
+    # Вызов настроек
     elif call.data == 'settings':
         wowgame.BeginningStart().beginning_settings(call.message.from_user)
 
+    # Вызовы языков
     elif call.data == 'ru':
         settings.set_language('русский')
         bot.send_message(wowgame.user.get_id_account(),
@@ -77,8 +80,15 @@ def callback_data(call):
         bot.send_message(wowgame.user.get_id_account(),
                          'Your language settings have been successfully changed. Have a nice game!')
 
+    # Вызовы классов
+    elif call.data == 'warrior' or 'hunter' or 'paladin'\
+            or 'rogue' or 'priest' or 'shaman'\
+            or 'mage' or 'warlock' or 'druid' or 'dk':
+        wowgame.creatinghero.two_step_creating_hero(message=call.message.from_user)
+
     elif call.data == 'history':
         pass
+
 
 
 # Вечный пуллинг, чтобы бот принимал всегда сообщения

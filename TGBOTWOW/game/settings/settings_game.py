@@ -46,6 +46,12 @@ class Settings:
                    'Druid\n'\
                    'Death Knight'
 
+    def text_on_welcom_step_two_creating_hero(self):
+        if self.get_language() == 'русский':
+            return f'Поздравляем, Ваш герой создан!'
+        else:
+            return f'Congratulations, your hero has been created!'
+
 
 # Инициализация настроек
 settings = Settings()

@@ -117,7 +117,7 @@ class StartGame:
             bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
             bot.send_message(user.get_id_account(), 'Комманды', reply_markup=markup_inline)
 
-
+startgame = StartGame()
 #
 # class LeftHand(Weapon):
 #     """Класс левой руки"""
@@ -200,7 +200,7 @@ hero = Hero()
 class CreatingHero:
 
     def welcom_step_one_creating_hero(self, message):
-        hero.set_name_hero(message.from_user.text)
+        hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
 
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
@@ -239,7 +239,7 @@ class CreatingHero:
                 types.InlineKeyboardButton(text='Hunter', callback_data='hunter'),
                 types.InlineKeyboardButton(text='Paladin', callback_data='paladin'),
                 types.InlineKeyboardButton(text='Rogue', callback_data='rogue'),
-                types.InlineKeyboardButton(text='Priest', callback_data='prist'),
+                types.InlineKeyboardButton(text='Priest', callback_data='priest'),
                 types.InlineKeyboardButton(text='Shaman', callback_data='shaman'),
                 types.InlineKeyboardButton(text='Mage', callback_data='mage'),
                 types.InlineKeyboardButton(text='Warlock', callback_data='warlock'),
@@ -247,10 +247,15 @@ class CreatingHero:
                 types.InlineKeyboardButton(text='Death Knight', callback_data='dk'),
             )
 
-            hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
-            bot.send_message(user.get_id_account(), settings.text_on_welcom_step_one_creating_hero(), reply_markup=markup_reply)
-            bot.send_message(user.get_id_account(), 'Choice class or write', reply_markup=markup_inline)
+            bot.send_message(user.get_id_account(),
+                             settings.text_on_welcom_step_one_creating_hero(),
+                             reply_markup=markup_reply)
 
+            bot.send_message(user.get_id_account(),
+                             'Choice class or write',
+                             reply_markup=markup_inline)
+
+            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message=message))
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
             # кнопки ру
@@ -284,7 +289,7 @@ class CreatingHero:
                 types.InlineKeyboardButton(text='Hunter', callback_data='hunter'),
                 types.InlineKeyboardButton(text='Paladin', callback_data='paladin'),
                 types.InlineKeyboardButton(text='Rogue', callback_data='rogue'),
-                types.InlineKeyboardButton(text='Priest', callback_data='prist'),
+                types.InlineKeyboardButton(text='Priest', callback_data='priest'),
                 types.InlineKeyboardButton(text='Shaman', callback_data='shaman'),
                 types.InlineKeyboardButton(text='Mage', callback_data='mage'),
                 types.InlineKeyboardButton(text='Warlock', callback_data='warlock'),
@@ -292,7 +297,6 @@ class CreatingHero:
                 types.InlineKeyboardButton(text='Death Knight', callback_data='dk'),
             )
 
-            hero.set_name_hero(message.from_user.text)  # Установка имени персонажа
             bot.send_message(user.get_id_account(),
                              settings.text_on_welcom_step_one_creating_hero(),
                              reply_markup=markup_reply)
@@ -301,13 +305,17 @@ class CreatingHero:
                              'Выберите класс героя или напишите его.',
                              reply_markup=markup_inline)
 
+            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message=message))
+
         bot.send_message(user.get_id_account(), 'text')
 
-    def one_step_creating_hero(self, message):
-        bot.send_message(user.get_id_account(), 'text')
+    def two_step_creating_hero(self, message):
+        hero.set_classes_hero(message.from_user.text)
+        bot.send_message(user.get_id_account(),
+                         settings.text_on_welcom_step_two_creating_hero())
 
-        pass
-    pass
+
+creatinghero = CreatingHero()
 
 
 class Game:
