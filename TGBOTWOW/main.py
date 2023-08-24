@@ -90,7 +90,6 @@ def callback_data(call):
         pass
 
 
-
 # Вечный пуллинг, чтобы бот принимал всегда сообщения
 bot.polling(none_stop=True, interval=0)
 print(f'Бот завершил работу в', datetime.datetime.now().strftime('Дата: %Y %m %d Время: %H:%M:%S'))

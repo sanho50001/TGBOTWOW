@@ -52,6 +52,18 @@ class Settings:
         else:
             return f'Congratulations, your hero has been created!'
 
+    def text_lvl_up(self):
+        if self.get_language() == 'русский':
+            return f'Поздравляем, Вы повысили уровень!'
+        else:
+            return f'Congratulations, you have raised the level!'
+
+    def text_battle(self, target1, target2):
+        if self.get_language() == 'русский':
+            return f'{target1} ударил по {target2} и нанес: '
+        else:
+            return f'{target1} hit {target2} and strike: '
+
 
 # Инициализация настроек
 settings = Settings()

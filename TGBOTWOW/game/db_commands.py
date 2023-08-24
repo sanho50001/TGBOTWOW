@@ -53,7 +53,6 @@ class DataBase:
             cursor.execute(f"""SELECT name_hero FROM user_classes WHERE name_hero = {name_hero}""")
             return cursor.fetchall()
 
-
     def Hero(self):
         with con.cursor() as cursor:
             cursor.execute(f'SELECT * FROM zone')
@@ -76,3 +75,7 @@ class DataBase:
         pass
 
     pass
+
+
+# Инициализация Базы Данных
+database = DataBase()
