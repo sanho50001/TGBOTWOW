@@ -1,6 +1,8 @@
 import telebot
 import datetime
 import wowgame
+# from wowgame import bigstart
+from game.user import User
 from game.settings.settingstelegram import CommandsTelegram
 from game.settings.settings_game import settings
 
@@ -9,6 +11,8 @@ from game.settings.settings_game import settings
 bot = telebot.TeleBot('5824374073:AAEfAlM2tCZzknjkol1_NKyPnzfaMYI31BE')
 print('Бот начал свою работу.')
 
+
+user = User()
 
 # Отпределение команд бота
 TGBOT = CommandsTelegram(bot)
@@ -20,7 +24,7 @@ TGBOT = CommandsTelegram(bot)
 @bot.message_handler(commands=["reg"])
 def reg(message):
     if wowgame:
-        wowgame.user.set_id_account(message.from_user.id)
+        user.set_id_account(message.from_user.id)
     bot.send_message(message.from_user.id, 'Начинаем процесс регистрации...')
     started = wowgame.Start()
     started.cret(message.from_user.id)
@@ -30,10 +34,19 @@ def reg(message):
 @bot.message_handler(commands=['start'])
 def start(message):
     """Обработчик комманды /start"""
-    if wowgame:
-        wowgame.user.set_id_account(message.from_user.id)
+
+    user.set_id_account(message.from_user.id)
     print(f'Чат ID: {message.chat.id} | {message.from_user.first_name} {message.from_user.last_name}: {message.text}')
-    wowgame.startgame.welcom(message=message)
+    wowgame.StartGame().welcom(message=message)
+
+# хендлер принимающий любой вид текста которые не прошли проверку на команду
+@bot.message_handler(commands=['test'])
+def get_text_messages(message):
+    """Обработчик всех сообщений"""
+    if wowgame:
+        user.set_id_account(message.from_user.id)
+    wowgame.bigstart.r2()
+
 
 
 # хендлер принимающий любой вид текста которые не прошли проверку на команду
@@ -41,7 +54,7 @@ def start(message):
 def get_text_messages(message):
     """Обработчик всех сообщений"""
     if wowgame:
-        wowgame.user.set_id_account(message.from_user.id)
+        user.set_id_account(message.from_user.id)
     TGBOT.getTextMessages(message=message)
 
 

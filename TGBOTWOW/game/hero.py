@@ -1,25 +1,29 @@
-from wowgame import user
-from game.character_stats import stats
+# from wowgame import user
+# from game.character_stats import stats
+# from game.character_stats import Stats
 
 
-class Hero(user):
+class Hero:
     """Класс Героя"""
     def __init__(self):
-        super().__init__()
+        self.id_account = ''
         self.name_hero = ''  # имя персонажа
         self.classes = '' #класс героя
         self.status = 'Online'
         self.health_status = 'Alive'
         self.health_procent = 100
-        self.stats = stats
-        self.health = self.stats.hp
+        # self.stats = Stats()
+        # self.health = self.stats.hp
         # self.armor = Armor()
         # self.backpack = Backpack()
         # self.left_hand = LeftHand()
         # self.right_hand = RightHand()
 
-        if self.health or self.health_procent <= 0:
-            self.health_status = 'Dead'
+    def set_id_account_hero(self, id_account):
+        self.id_account = id_account
+
+    def get_id_account_hero(self):
+        return self.id_account
 
     def set_name_hero(self, name_hero):
         self.name_hero = name_hero
@@ -33,8 +37,5 @@ class Hero(user):
     def get_classes_hero(self):
         return self.classes
 
-    def get_health_hero(self):
-        return self.health
 
-
-hero = Hero()
+# hero = Hero()

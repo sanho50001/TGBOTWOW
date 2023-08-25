@@ -1,10 +1,7 @@
-from wowgame import hero, bot, user
-from game.settings.settings_game import settings
-
-
 class Stats:
     def __init__(self):
         # Главные статы
+
         self.main_stats = ''
         self.lvl = 0
         self.xp = 0
@@ -23,10 +20,12 @@ class Stats:
         self.defense = 0
         self.dodge = 0
         self.parry = 0
+        self.crit_chance = self.agi / 100
+        self.crit_damage = self.damage * 2
 
-        if self.xp >= self.lvl * 200:
-            self.xp -= self.lvl * 200
-            self.lvl_up()
+        # if self.xp >= self.lvl * 200:
+        #     self.xp -= self.lvl * 200
+        #     self.lvl_up()
 
     def set_xp(self, xp):
         self.xp += xp
@@ -35,9 +34,9 @@ class Stats:
         return self.xp
 
     def stats_up(self):
-        bot.send_message(user.get_id_account(), settings.text_lvl_up())
 
         if self.main_stats == self.str:
+            # Главные статы
             self.str += self.lvl + 2
             self.agi += self.lvl + 1
             self.int += self.lvl + 1
@@ -46,13 +45,16 @@ class Stats:
             self.hp += self.lvl + self.stamina * 2
             self.mana += self.lvl * self.int
 
+            # Второстепенные
             self.ap = (self.str * 2) + (self.agi + 1)
             self.damage = self.ap
             self.defense = (self.str * 1.5) + (self.agi * 2)
             self.dodge = self.agi * 2
             self.parry = self.agi * 1.5
 
+
         elif self.main_stats == self.agi:
+            # Главные статы
             self.str += self.lvl + 1
             self.agi += self.lvl + 2
             self.int += self.lvl + 1
@@ -61,6 +63,7 @@ class Stats:
             self.hp += self.lvl + self.stamina * 2
             self.mana += self.lvl * self.int
 
+            # Второстепенные
             self.ap = (self.str + 1) + (self.agi * 2)
             self.damage = self.ap
             self.defense = (self.str * 1.5) + (self.agi * 2)
@@ -68,6 +71,7 @@ class Stats:
             self.parry = self.agi * 1.5
 
         elif self.main_stats == self.int:
+            # Главные статы
             self.str += self.lvl + 1
             self.agi += self.lvl + 1
             self.int += self.lvl + 2
@@ -76,6 +80,7 @@ class Stats:
             self.hp += self.lvl + self.stamina * 2
             self.mana += self.lvl * (self.int * 2)
 
+            # Второстепенные
             self.ap = (self.str + 1) + (self.agi + 1)
             self.spd = self.lvl * (self.int * 2)
             self.damage = self.spd
@@ -83,39 +88,22 @@ class Stats:
             self.dodge = self.agi * 2
             self.parry = self.agi * 1.5
 
-    def lvl_up(self):
-        if hero.get_classes_hero() == 'Warrior':
-            self.main_stats = self.str
+        else:
+            # Главные статы
+            self.str += self.lvl + 2
+            self.agi += self.lvl + 1
+            self.int += self.lvl + 1
+            self.stamina += self.lvl + 2
+            self.spirit += self.lvl + 1
+            self.hp += self.lvl + self.stamina * 2
+            self.mana += self.lvl * self.int
 
-        elif hero.get_classes_hero() == 'Hunter':
-            self.main_stats = self.agi
-
-        elif hero.get_classes_hero() == 'Paladin':
-            self.main_stats = self.str
-
-        elif hero.get_classes_hero() == 'Rogue':
-            self.main_stats = self.agi
-
-        elif hero.get_classes_hero() == 'Priest':
-            self.main_stats = self.int
-
-        elif hero.get_classes_hero() == 'Shaman':
-            self.main_stats = self.int
-
-        elif hero.get_classes_hero() == 'Mage':
-            self.main_stats = self.int
-
-        elif hero.get_classes_hero() == 'Warlock':
-            self.main_stats = self.int
-
-        elif hero.get_classes_hero() == 'Druid':
-            self.main_stats = self.agi
-
-        elif hero.get_classes_hero() == 'Death Knight':
-            self.main_stats = self.str
-
-        self.lvl += 1
-        self.stats_up()
+            # Второстепенные
+            self.ap = (self.str * 2) + (self.agi + 1)
+            self.damage = self.ap
+            self.defense = (self.str * 1.5) + (self.agi * 2)
+            self.dodge = self.agi * 2
+            self.parry = self.agi * 1.5
 
     def set_str(self, str):
         self.str = str
@@ -198,5 +186,3 @@ class Stats:
     def get_parry(self):
         return self.parry
 
-
-stats = Stats()

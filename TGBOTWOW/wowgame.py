@@ -1,7 +1,6 @@
 import random
 import time
 import datetime
-from game.settings.settingstelegram import CommandsTelegram
 from game.armor import Armor
 from game.weapon import Weapon
 from game.settings.settings_game import settings
@@ -12,21 +11,91 @@ from game.potion import Potion
 from game.tavern import Tavern
 from game.tranquility import Tranquility
 from game.db_commands import database
-from game.hero import hero
+from game.hero import Hero
 from game.user import user
+from game.character_stats import Stats
 from game.npc import npc
 from game.zone import zone
-from main import bot
+# from main import bot
 from telebot import types
+import telebot
+
+bot = telebot.TeleBot('5824374073:AAEfAlM2tCZzknjkol1_NKyPnzfaMYI31BE')
+# user = User()
+
+
+class Heroes:
+    def __init__(self):
+        self.hero = Hero()
+        self.stats = Stats()
+        self.health = self.stats.hp
+
+        if self.health or self.hero.health_procent <= 0:
+            self.hero.health_status = 'Dead'
+
+        if self.stats.xp >= self.stats.lvl * 200:
+            self.stats.xp -= self.stats.lvl * 200
+            self.lvl_up()
+
+    def lvl_up(self):
+        if self.hero.get_classes_hero() == 'Warrior':
+            self.stats.main_stats = self.stats.str
+
+        elif self.hero.get_classes_hero() == 'Hunter':
+            self.stats.main_stats = self.stats.agi
+
+        elif self.hero.get_classes_hero() == 'Paladin':
+            self.stats.main_stats = self.stats.str
+
+        elif self.hero.get_classes_hero() == 'Rogue':
+            self.stats.main_stats = self.stats.agi
+
+        elif self.hero.get_classes_hero() == 'Priest':
+            self.stats.main_stats = self.stats.int
+
+        elif self.hero.get_classes_hero() == 'Shaman':
+            self.stats.main_stats = self.stats.int
+
+        elif self.hero.get_classes_hero() == 'Mage':
+            self.stats.main_stats = self.stats.int
+
+        elif self.hero.get_classes_hero() == 'Warlock':
+            self.stats.main_stats = self.stats.int
+
+        elif self.hero.get_classes_hero() == 'Druid':
+            self.stats.main_stats = self.stats.agi
+
+        elif self.hero.get_classes_hero() == 'Death Knight':
+            self.stats.main_stats = self.stats.str
+
+
+        self.stats.lvl += 1
+        self.stats.stats_up()
+
+    def get_health_hero(self):
+        return self.health
+
+
+class NPC:
+    def __init__(self):
+        self.npc = npc
+        self.stats = Stats()
+
+        self.health = self.stats.hp
+
+        if self.health or self.npc.health_procent <= 0:
+            self.npc.status = 'Dead'
+
+
+hero = Heroes()
 
 
 class BeginningStart:
 
-    def r2(self, message):
-        # exp = db.Get_Hero()
-        #
-        # bot.send_message(message.from_user.id, settings.text_on_start_game(), reply_markup=markup_reply)
-        pass
+    def r2(self):
+
+        bot.send_message(user.get_id_account(), '<span style="color:blue">foo</span>')
+
 
     def beginning_settings(self, message):
 
@@ -57,6 +126,7 @@ class StartGame:
 
         # Добавляем пользователя в базу данных
         database.Create_User(id_account=message.from_user.id)
+        user.set_id_account(id_account=message.from_user.id)
 
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
@@ -115,23 +185,11 @@ class Backpack:
         pass
     pass
 
-
-class Zone:
-    """Класс Зоны """
-    def __init__(self, name_location):
-        self.name_location = name_location
-        self.name_zone = ''
-        self.spot = []
-        self.spot_npc = []
-        pass
-    pass
-
-
 class CreatingHero:
 
     def welcom_step_one_creating_hero(self, message):
-        hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
-
+        hero.hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
+        user.set_id_account(id_account=message.from_user.id)
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
         markup_inline = types.InlineKeyboardMarkup()
@@ -240,7 +298,7 @@ class CreatingHero:
         bot.send_message(user.get_id_account(), 'text')
 
     def two_step_creating_hero(self, message):
-        hero.set_classes_hero(message.from_user.text)
+        hero.hero.set_classes_hero(message.from_user.text)
         bot.send_message(user.get_id_account(),
                          settings.text_on_welcom_step_two_creating_hero())
 
@@ -258,4 +316,5 @@ class Game:
 
 
 creatinghero = CreatingHero()
-startgame = StartGame()
+# startgame = StartGame()
+bigstart = BeginningStart()
