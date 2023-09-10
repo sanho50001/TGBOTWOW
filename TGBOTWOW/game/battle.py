@@ -33,4 +33,4 @@ class Battle:
     #         pass
 
 
-battle = Battle()
+# battle = Battle()

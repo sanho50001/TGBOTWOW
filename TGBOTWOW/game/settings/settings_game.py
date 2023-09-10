@@ -64,6 +64,11 @@ class Settings:
         else:
             return f'{target1} hit {target2} and strike: '
 
+    def text_games(self):
+        if self.get_language() == 'русский':
+            return f'Выберите действие'
+        else:
+            return f'Choice action'
 
 # Инициализация настроек
 settings = Settings()
