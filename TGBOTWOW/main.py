@@ -99,8 +99,37 @@ def callback_data(call):
             or 'mage' or 'warlock' or 'druid' or 'dk':
         wowgame.creatinghero.two_step_creating_hero(message=call.message.from_user)
 
+    elif call.data == 'hit':
+        pass
+
+    elif call.data == 'spell':
+        pass
+    elif call.data == 'block':
+        pass
+    elif call.data == 'backpack':
+        pass
+    elif call.data == 'Up':
+        wowgame.movement.set_coord_y(0.5)
+        wowgame.movement.move()
+    elif call.data == 'Down':
+        wowgame.movement.set_coord_y(-0.5)
+    elif call.data == 'Left':
+        wowgame.movement.set_coord_x(-0.5)
+    elif call.data == 'Right':
+        wowgame.movement.set_coord_x(0.5)
     elif call.data == 'history':
         pass
+    elif call.data == 'history':
+        pass
+    elif call.data == 'history':
+        pass
+    elif call.data == 'history':
+        pass
+    elif call.data == 'history':
+        pass
+
+
+
 
 
 # Вечный пуллинг, чтобы бот принимал всегда сообщения

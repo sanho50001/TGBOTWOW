@@ -62,9 +62,13 @@ class DataBase:
             cursor.close()
         pass
 
-    def Zone(self):
-        pass
+    def Zone(self, coording_x, coording_y):
+        with con.cursor() as cursor:
+            cursor.execute(f"""SELECT coord_x and coord_y FROM zone WHERE coord_x = {coording_x} and coord_y = {coording_y}""")
 
+            # Условие если в БД не нашлась запись, то создается.
+            if cursor.fetchone() is None:
+                return None
     def Spot(self):
         pass
 

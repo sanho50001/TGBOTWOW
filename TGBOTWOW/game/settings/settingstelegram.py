@@ -30,6 +30,10 @@ class CommandsTelegram:
             wowgame.user.set_id_account(message.from_user.id)
             wowgame.BeginningStart().beginning(message)
 
+        elif message.text == "/game_test":
+            wowgame.user.set_id_account(message.from_user.id)
+            wowgame.Game().game()
+
         elif message.text == "/help":
             if settings.get_language() == 'english':
                 self.bot.send_message(message.from_user.id, "Commands", reply_markup=markup_reply)

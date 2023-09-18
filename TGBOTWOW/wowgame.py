@@ -113,6 +113,19 @@ class Battles:
 battle = Battles()
 
 
+class Movemented:
+    def __init__(self):
+        self.movement = Movement()
+
+    def move(self):
+        x = database.Zone(self.movement.get_coord_x(), self.movement.get_coord_y())
+        if x == None:
+            bot.send_message(user.get_id_account(), 'Вы ничего не нашли')
+
+
+movement = Movemented()
+
+
 class BeginningStart:
 
     def r2(self):
@@ -331,72 +344,125 @@ class Game:
     """Класс игры"""
     markup_reply = types.ReplyKeyboardMarkup()
     markup_inline = types.InlineKeyboardMarkup()
+    def game(self):
+        if battle.battle.get_status_battle():
+            if settings.get_language() == 'english':
+                # кнопки eng
+                eng_button_hit = types.KeyboardButton('hit')
+                eng_button_spell = types.KeyboardButton('spell')
+                eng_button_block = types.KeyboardButton('block')
+                eng_button_backpack = types.KeyboardButton('backpack')
 
-    if battle.battle.get_status_battle():
-        pass
+                # создание кнопки и добавление туда кнопок.
+                self.markup_reply.add(
+                    eng_button_hit,
+                    eng_button_spell,
+                    eng_button_block,
+                    eng_button_backpack,
+                )
 
-        if settings.get_language() == 'english':
-            # кнопки eng
-            eng_button_hit = types.KeyboardButton('hit')
-            eng_button_spell = types.KeyboardButton('spell')
-            eng_button_block = types.KeyboardButton('block')
-            eng_button_backpack = types.KeyboardButton('backpack')
+                self.markup_inline.add(
+                    types.InlineKeyboardButton(text='hit', callback_data='hit'),
+                    types.InlineKeyboardButton(text='spell', callback_data='spell'),
+                    types.InlineKeyboardButton(text='block', callback_data='block'),
+                    types.InlineKeyboardButton(text='backpack', callback_data='backpack'),
+                )
 
-            # создание кнопки и добавление туда кнопок.
-            markup_reply.add(
-                eng_button_hit,
-                eng_button_spell,
-                eng_button_block,
-                eng_button_backpack,
-            )
+                bot.send_message(user.get_id_account(),
+                                 settings.text_games(),
+                                 reply_markup=self.markup_reply)
 
-            markup_inline.add(
-                types.InlineKeyboardButton(text='hit', callback_data='hit'),
-                types.InlineKeyboardButton(text='spell', callback_data='spell'),
-                types.InlineKeyboardButton(text='block', callback_data='block'),
-                types.InlineKeyboardButton(text='backpack', callback_data='backpack'),
-            )
+                bot.send_message(user.get_id_account(),
+                                 'Choice action or write',
+                                 reply_markup=self.markup_inline)
+            else:
+                # кнопки ru
+                ru_button_hit = types.KeyboardButton('Удар')
+                ru_button_spell = types.KeyboardButton('Способности')
+                ru_button_block = types.KeyboardButton('Защита')
+                ru_button_backpack = types.KeyboardButton('Сумка')
 
-            bot.send_message(user.get_id_account(),
-                             settings.text_games(),
-                             reply_markup=markup_reply)
+                # создание кнопки и добавление туда кнопок.
+                self.markup_reply.add(
+                    ru_button_hit,
+                    ru_button_spell,
+                    ru_button_block,
+                    ru_button_backpack,
+                )
 
-            bot.send_message(user.get_id_account(),
-                             'Choice action or write',
-                             reply_markup=markup_inline)
+                self.markup_inline.add(
+                    types.InlineKeyboardButton(text='hit', callback_data='hit'),
+                    types.InlineKeyboardButton(text='spell', callback_data='spell'),
+                    types.InlineKeyboardButton(text='block', callback_data='block'),
+                    types.InlineKeyboardButton(text='backpack', callback_data='backpack'),
+                )
+
+                bot.send_message(user.get_id_account(),
+                                 settings.text_games(),
+                                 reply_markup=self.markup_reply)
+
+                bot.send_message(user.get_id_account(),
+                                 'Выберите действие или напишите',
+                                 reply_markup=self.markup_inline)
         else:
-            # кнопки ru
-            ru_button_hit = types.KeyboardButton('Удар')
-            ru_button_spell = types.KeyboardButton('Способности')
-            ru_button_block = types.KeyboardButton('Защита')
-            ru_button_backpack = types.KeyboardButton('Сумка')
+            if settings.get_language() == 'english':
+                # кнопки eng
+                eng_button_Up = types.KeyboardButton('Up')
+                eng_button_Down = types.KeyboardButton('Down')
+                eng_button_Left = types.KeyboardButton('Left')
+                eng_button_Right = types.KeyboardButton('Right')
 
-            # создание кнопки и добавление туда кнопок.
-            markup_reply.add(
-                ru_button_hit,
-                ru_button_spell,
-                ru_button_block,
-                ru_button_backpack,
-            )
+                # создание кнопки и добавление туда кнопок.
+                self.markup_reply.add(
+                    eng_button_Up,
+                    eng_button_Down,
+                    eng_button_Left,
+                    eng_button_Right,
+                )
 
-            markup_inline.add(
-                types.InlineKeyboardButton(text='hit', callback_data='hit'),
-                types.InlineKeyboardButton(text='spell', callback_data='spell'),
-                types.InlineKeyboardButton(text='block', callback_data='block'),
-                types.InlineKeyboardButton(text='backpack', callback_data='backpack'),
-            )
+                self.markup_inline.add(
+                    types.InlineKeyboardButton(text='Up', callback_data='Up'),
+                    types.InlineKeyboardButton(text='Down', callback_data='Down'),
+                    types.InlineKeyboardButton(text='Left', callback_data='Left'),
+                    types.InlineKeyboardButton(text='Right', callback_data='Right'),
+                )
 
-            bot.send_message(user.get_id_account(),
-                             settings.text_games(),
-                             reply_markup=markup_reply)
+                bot.send_message(user.get_id_account(),
+                                 settings.text_games(),
+                                 reply_markup=self.markup_reply)
 
-            bot.send_message(user.get_id_account(),
-                             'Choice action or write',
-                             reply_markup=markup_inline)
-    else:
-        pass
+                bot.send_message(user.get_id_account(),
+                                 'Choice action or write',
+                                 reply_markup=self.markup_inline)
+            else:
+                # кнопки ru
+                ru_button_Up = types.KeyboardButton('Вверх')
+                ru_button_Down = types.KeyboardButton('Вниз')
+                ru_button_Left = types.KeyboardButton('Влево')
+                ru_button_Right = types.KeyboardButton('Вправо')
 
-    pass
+                # создание кнопки и добавление туда кнопок.
+                self.markup_reply.add(
+                    ru_button_Up,
+                    ru_button_Down,
+                    ru_button_Left,
+                    ru_button_Right,
+                )
+
+                self.markup_inline.add(
+                    types.InlineKeyboardButton(text='Вверх', callback_data='Up'),
+                    types.InlineKeyboardButton(text='Вниз', callback_data='Down'),
+                    types.InlineKeyboardButton(text='Влево', callback_data='Left'),
+                    types.InlineKeyboardButton(text='Вправо', callback_data='Right'),
+                )
+
+                bot.send_message(user.get_id_account(),
+                                 settings.text_games(),
+                                 reply_markup=self.markup_reply)
+
+                bot.send_message(user.get_id_account(),
+                                 'Выберите действие или напишите',
+                                 reply_markup=self.markup_inline)
 
 
 creatinghero = CreatingHero()
