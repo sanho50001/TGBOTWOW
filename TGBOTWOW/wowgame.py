@@ -158,8 +158,6 @@ class BeginningStart:
 class StartGame:
 
     def welcom(self, message):
-
-
         # Добавляем пользователя в базу данных
         database.Create_User(id_account=message.from_user.id)
         user.set_id_account(id_account=message.from_user.id)
@@ -196,8 +194,20 @@ class StartGame:
             bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
             bot.send_message(user.get_id_account(), 'Комманды', reply_markup=markup_inline)
 
+    # def choice_hero(self):
+    #     # вызов метода создания кнопки
+    #     markup_reply = types.ReplyKeyboardMarkup()
+    #     markup_inline = types.InlineKeyboardMarkup()
+    #
+    #     # кнопки
+    #     start_game_button = types.KeyboardButton('/startgame')
+    #
+    #     # создание кнопки и добавление туда кнопок.
+    #     markup_reply.add(start_game_button, )
 
-#
+
+
+
 # class LeftHand(Weapon):
 #     """Класс левой руки"""
 #     def __init__(self):
@@ -280,7 +290,7 @@ class CreatingHero:
                              'Choice class or write',
                              reply_markup=markup_inline)
 
-            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message=message))
+            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message.from_user))
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
             # кнопки ру
@@ -344,6 +354,7 @@ class Game:
     """Класс игры"""
     markup_reply = types.ReplyKeyboardMarkup()
     markup_inline = types.InlineKeyboardMarkup()
+
     def game(self):
         if battle.battle.get_status_battle():
             if settings.get_language() == 'english':
