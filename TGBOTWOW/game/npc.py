@@ -11,5 +11,11 @@ class NPC:
         # self.left_hand = LeftHand()
         # self.right_hand = RightHand()
 
+    def set_name_npc(self, name_npc):
+        self.name_npc = name_npc
+
+    def get_name_npc(self):
+        return self.name_npc
+
 
 npc = NPC()

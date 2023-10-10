@@ -22,7 +22,7 @@ class Settings:
 
     def text_on_welcom_step_one_creating_hero(self):
         if self.get_language() == 'русский':
-            return 'Классы\n'\
+            return 'Классы:\n'\
                    'Воин\n'\
                    'Охотник\n'\
                    'Паладин\n'\
@@ -34,7 +34,7 @@ class Settings:
                    'Друид\n'\
                    'Рыцарь Смерти'
         else:
-            return 'Classes\n' \
+            return 'Classes:\n' \
                    'Warrior\n' \
                    'Hunter\n'\
                    'Paladin\n'\
@@ -65,6 +65,12 @@ class Settings:
             return f'{target1} hit {target2} and strike: '
 
     def text_games(self):
+        if self.get_language() == 'русский':
+            return f'Выберите действие'
+        else:
+            return f'Choice action'
+
+    def text_choice_hero(self):
         if self.get_language() == 'русский':
             return f'Выберите действие'
         else:

@@ -12,6 +12,7 @@ class Stats:
         self.spirit = 0
         self.hp = 0
         self.mana = 0
+        self.energy = 0
 
         # Второстепенные
         self.ap = 0
@@ -62,6 +63,7 @@ class Stats:
             self.spirit += self.lvl + 1
             self.hp += self.lvl + self.stamina * 2
             self.mana += self.lvl * self.int
+            self.energy = 100
 
             # Второстепенные
             self.ap = (self.str + 1) + (self.agi * 2)
@@ -149,6 +151,15 @@ class Stats:
 
     def get_mana(self):
         return self.mana
+
+    def set_energy(self, energy, use=False):
+        if use:
+            self.energy -= energy
+        else:
+            self.energy += energy
+
+    def get_energy(self):
+        return self.energy
 
     def set_ap(self, ap):
         self.ap = ap

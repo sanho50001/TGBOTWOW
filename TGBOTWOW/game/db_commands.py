@@ -29,6 +29,7 @@ class DataBase:
     # def __init__(self):
     # Добавление юзера в базу данных для дальнейшей работы.
     def Create_User(self, id_account):
+        """Добавление юзера в базу данных для дальнейшей работы"""
         with con.cursor() as cursor:
             cursor.execute(f"""SELECT id_account FROM user_account WHERE id_account = {id_account}""")
 
@@ -37,30 +38,55 @@ class DataBase:
                 cursor.execute(f"""INSERT INTO user_account SET id_account={id_account}""")
                 con.commit()
 
-    # Создание героя
-    def Create_Hero(self, name_hero, classes):
+    def get_id(self, id_account):
+        """Получение id пользователя в таблице"""
         with con.cursor() as cursor:
-            cursor.execute(f"""SELECT name_hero FROM user_classes WHERE name_hero = {name_hero}""")
+            cursor.execute(f"""SELECT id FROM user_account WHERE id_account={id_account}""")
+            user_id = cursor.fetchone()
+            value = user_id[0]
+            return value
 
-            # Условие если в БД не нашлась запись, то создается.
-            if cursor.fetchone() is None:
-                cursor.execute(f"""INSERT INTO user_classes SET name_hero={name_hero}, class={classes}""")
-                con.commit()
+    # Создание героя
+    def Create_Hero(self, name_hero, classes, id_account, lvl=1):
+        """Создание героя"""
+        with con.cursor() as cursor:
+            user_id = self.get_id(id_account)
+            try:
+                cursor.execute(
+                    "INSERT INTO user_classes (id, name_hero, class, id_account, lvl) VALUES (%s, %s, %s, %s, %s)",
+                    (user_id, name_hero, classes, id_account, lvl))
+            except Error as e:
+                print(f"Ошибка: {e}")
+            con.commit()
 
-    def Get_Hero(self, name_hero):
-        hero = {}
+    def get_hero(self, name_hero):
+        """Получение героя"""
         with con.cursor() as cursor:
             cursor.execute(f"""SELECT name_hero FROM user_classes WHERE name_hero = {name_hero}""")
             return cursor.fetchall()
 
-    def Hero(self):
+    def get_hero_list(self):
         with con.cursor() as cursor:
-            cursor.execute(f'SELECT * FROM zone')
+            cursor.execute(f'SELECT name_hero, class, lvl FROM user_classes')
             result = cursor.fetchall()
-            for row in result:
-                print(row)
             cursor.close()
-        pass
+
+            sorted_dict = {}
+            for enum_row, row in enumerate(result):
+
+                if os.getenv('language') == 'english':
+
+                    sorted_dict[enum_row] = {
+                        'name hero': 'None' if row[0] == '' else row[0],
+                        'classes hero': row[1],
+                        'lvl': row[2]}
+                else:
+                    sorted_dict[enum_row] = {
+                        'Имя персонажа': 'Отсутствует' if row[0] == '' else row[0],
+                        'Класс героя': row[1],
+                        'Уровень': row[2]}
+
+            return (return_dict for return_dict in sorted_dict.items())
 
     def Zone(self, coording_x, coording_y):
         with con.cursor() as cursor:
@@ -78,7 +104,8 @@ class DataBase:
     def NPC(self):
         pass
 
-    pass
+
+
 
 
 # Инициализация Базы Данных

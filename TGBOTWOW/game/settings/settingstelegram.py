@@ -26,6 +26,7 @@ class CommandsTelegram:
         if message.text == "text":
             self.bot.send_message(message.from_user.id, 'text')
 
+
         elif message.text == "/settings":
             wowgame.user.set_id_account(message.from_user.id)
             wowgame.BeginningStart().beginning(message)
@@ -39,11 +40,19 @@ class CommandsTelegram:
                 self.bot.send_message(message.from_user.id, "Commands", reply_markup=markup_reply)
             else:
                 self.bot.send_message(message.from_user.id, "Команды", reply_markup=markup_reply)
+        #
+        # elif message.text == "/stop" or '/стоп':
+        #     if settings.get_language() == 'english':
+        #         self.bot.send_message(message.from_user.id, 'Stop commands')
+        #         wowgame.startgame.welcom(message=message)
+        #     else:
+        #         self.bot.send_message(message.from_user.id, 'Стоп комманда')
+
         else:
             if settings.get_language() == 'english':
-                self.bot.send_message(message.from_user.id, "Sorry. I do not understand", reply_markup=markup_reply)
+                self.bot.send_message(message.from_user.id, "Sorry. I do not understand ❤️", reply_markup=markup_reply)
             else:
-                self.bot.send_message(message.from_user.id, 'Извините, я вас не совсем понимаю.')
+                self.bot.send_message(message.from_user.id, 'Извините, я вас не совсем понимаю❤️ ')
 
     # Обработчик сообщений. Срабатывает когда сообщение не прошло проверку на команду
     def getTextMessages(self, message):

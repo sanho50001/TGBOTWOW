@@ -38,42 +38,29 @@ class Heroes:
             self.lvl_up()
 
     def lvl_up(self):
-        if self.hero.get_classes_hero() == 'Warrior':
+        if self.hero.get_classes_hero() == 'Warrior' or 'Paladin' or 'Death Knight':
             self.stats.main_stats = self.stats.str
 
-        elif self.hero.get_classes_hero() == 'Hunter':
+        elif self.hero.get_classes_hero() == 'Hunter' or 'Rogue' or 'Druid':
             self.stats.main_stats = self.stats.agi
 
-        elif self.hero.get_classes_hero() == 'Paladin':
-            self.stats.main_stats = self.stats.str
-
-        elif self.hero.get_classes_hero() == 'Rogue':
-            self.stats.main_stats = self.stats.agi
-
-        elif self.hero.get_classes_hero() == 'Priest':
+        elif self.hero.get_classes_hero() == 'Priest' or 'Shaman' or 'Mage' or 'Warlock':
             self.stats.main_stats = self.stats.int
-
-        elif self.hero.get_classes_hero() == 'Shaman':
-            self.stats.main_stats = self.stats.int
-
-        elif self.hero.get_classes_hero() == 'Mage':
-            self.stats.main_stats = self.stats.int
-
-        elif self.hero.get_classes_hero() == 'Warlock':
-            self.stats.main_stats = self.stats.int
-
-        elif self.hero.get_classes_hero() == 'Druid':
-            self.stats.main_stats = self.stats.agi
-
-        elif self.hero.get_classes_hero() == 'Death Knight':
-            self.stats.main_stats = self.stats.str
-
 
         self.stats.lvl += 1
         self.stats.stats_up()
 
     def get_health_hero(self):
-        return self.health
+        return f'Здоровье героя ❤️ {self.health}'
+
+    def get_stats_hero(self):
+        if self.stats.energy >= 1:
+            return f'Здоровье героя  ❤️ {self.health}\n' \
+                   f'Энергия героя ⚡ {self.stats.get_energy()}'
+        else:
+            return f'Здоровье героя  ❤️ {self.health}\n' \
+                   f'Мана героя 💧 {self.stats.get_mana()}' \
+
 
 
 class NPC:
@@ -94,21 +81,20 @@ class Battles:
     def __init__(self):
         self.battle = Battle()
 
-    def hit(self, hero, npc):
+    def hit(self, hero, npc, spell=None):
         # Удар героя по нпс
         npc.health -= hero.stats.damage
         bot.send_message(user.get_id_account(),
-                         str(settings.text_battle(hero.name_hero, npc.name_npc) + hero.stats.damage))
+                         str(settings.text_battle(hero.name_hero, npc.name_npc) + hero.stats.damage + '💥'))
 
         # Если здоровье нпс выше 0, то нпс наносит удар по герою
         if npc.health > 0:
             hero.health -= npc.stats.damage
             bot.send_message(user.get_id_account(),
-                             str(settings.text_battle(npc.name_hero, hero.name_npc) + npc.stats.damage))
+                             str(settings.text_battle(npc.name_hero, hero.name_npc) + npc.stats.damage + '💥'))
 
         # else:
         #     pass
-
 
 battle = Battles()
 
@@ -151,7 +137,7 @@ class BeginningStart:
             types.InlineKeyboardButton(text='Русский язык', callback_data='ru'),
             types.InlineKeyboardButton(text='English language', callback_data='eng'),
         )
-        bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
+        bot.send_message(user.get_id_account(), settings.text_games(), reply_markup=markup_reply)
         bot.send_message(user.get_id_account(), 'Commands', reply_markup=markup_inline)
 
 
@@ -182,7 +168,7 @@ class StartGame:
                 types.InlineKeyboardButton(text='settings', callback_data='settings'),
             )
 
-            bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
+            bot.send_message(chat_id=user.get_id_account(), text=settings.text_on_start_game(), reply_markup=markup_reply)
             bot.send_message(user.get_id_account(), 'Commands', reply_markup=markup_inline)
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
@@ -194,20 +180,60 @@ class StartGame:
             bot.send_message(user.get_id_account(), settings.text_on_start_game(), reply_markup=markup_reply)
             bot.send_message(user.get_id_account(), 'Комманды', reply_markup=markup_inline)
 
-    # def choice_hero(self):
-    #     # вызов метода создания кнопки
-    #     markup_reply = types.ReplyKeyboardMarkup()
-    #     markup_inline = types.InlineKeyboardMarkup()
-    #
-    #     # кнопки
-    #     start_game_button = types.KeyboardButton('/startgame')
-    #
-    #     # создание кнопки и добавление туда кнопок.
-    #     markup_reply.add(start_game_button, )
+    def choice_hero_step_one(self):
 
+        # вызов метода создания кнопки
+        markup_reply = types.ReplyKeyboardMarkup()
+        markup_inline = types.InlineKeyboardMarkup()
 
+        # кнопки
+        start_game_button = types.KeyboardButton('/list_hero')
 
+        # создание кнопки и добавление туда кнопок.
+        if settings.get_language() == 'english':
+            markup_reply.add(start_game_button, )
+            markup_inline.add(
+                types.InlineKeyboardButton(text='List Heroes', callback_data='list_hero'),
+            )
+            bot.send_message(user.get_id_account(), settings.text_games(), reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Commands', reply_markup=markup_inline)
+        else:
+            markup_reply.add(start_game_button, )
+            markup_inline.add(
+                types.InlineKeyboardButton(text='Список персонажей', callback_data='list_hero'),
+            )
+            bot.send_message(user.get_id_account(), settings.text_games(), reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Комманды', reply_markup=markup_inline)
 
+    def choice_hero_step_two(self):
+
+        # вызов метода создания кнопки
+        markup_reply = types.ReplyKeyboardMarkup()
+        markup_inline = types.InlineKeyboardMarkup()
+
+        text = ''
+        for numm, dicted in database.get_hero_list():
+            if settings.get_language() == 'english':
+
+                text += f'{int(numm) + 1} Hero: \n'
+                for row in dicted:
+                    text += (f'{row}:{dicted[row]} ')
+            else:
+
+                text += f'{int(numm) + 1} Герой: \n'
+                for row in dicted:
+                    text += (f'{row}:{dicted[row]} ')
+
+        markup_reply.add(types.KeyboardButton(text),)
+        markup_inline.add(types.InlineKeyboardButton(text=f'{text[0:7]}', callback_data=f'{text[0:7]}',),
+                          )
+        if settings.get_language() == 'english':
+
+            bot.send_message(user.get_id_account(), 'list', reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'choice', reply_markup=markup_inline)
+        else:
+            bot.send_message(user.get_id_account(), 'Список', reply_markup=markup_reply)
+            bot.send_message(user.get_id_account(), 'Выберите', reply_markup=markup_inline)
 # class LeftHand(Weapon):
 #     """Класс левой руки"""
 #     def __init__(self):
@@ -235,7 +261,8 @@ class Backpack:
 class CreatingHero:
 
     def welcom_step_one_creating_hero(self, message):
-        hero.hero.set_name_hero(message.from_user.text)  #Установка имени персонажа
+        # print(message)
+        hero.hero.set_name_hero(message.text)  #Установка имени персонажа
         user.set_id_account(id_account=message.from_user.id)
         # вызов метода создания кнопки
         markup_reply = types.ReplyKeyboardMarkup()
@@ -290,7 +317,7 @@ class CreatingHero:
                              'Choice class or write',
                              reply_markup=markup_inline)
 
-            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message.from_user))
+            bot.register_next_step_handler(message, self.two_step_creating_hero)
         # Если язык пользователем установлен 'русский', то берется русская адаптация
         else:
             # кнопки ру
@@ -340,15 +367,22 @@ class CreatingHero:
                              'Выберите класс героя или напишите его.',
                              reply_markup=markup_inline)
 
-            bot.register_next_step_handler(user.get_id_account(), self.two_step_creating_hero(message=message))
-
-        bot.send_message(user.get_id_account(), 'text')
+            bot.register_next_step_handler(message, self.two_step_creating_hero)
 
     def two_step_creating_hero(self, message):
-        hero.hero.set_classes_hero(message.from_user.text)
+        # hero.hero.set_classes_hero(message.text)    #Задаем класс персонажа
         bot.send_message(user.get_id_account(),
                          settings.text_on_welcom_step_two_creating_hero())
 
+        database.Create_Hero(
+            name_hero=hero.hero.get_name_hero(),
+            classes=hero.hero.get_classes_hero(),
+            id_account=user.get_id_account()
+        )
+
+    #     bot.register_next_step_handler(message, self.three_step_creating_hero)
+    # def three_step_creating_hero(self, message):
+    #     bot.send_message(user.get_id_account(), settings.)
 
 class Game:
     """Класс игры"""
@@ -477,5 +511,5 @@ class Game:
 
 
 creatinghero = CreatingHero()
-# startgame = StartGame()
+startgame = StartGame()
 bigstart = BeginningStart()
