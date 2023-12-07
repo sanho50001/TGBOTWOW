@@ -23,6 +23,13 @@ config = {
 con = mysql.connector.connect(**config)
 
 
+class Settings_on_db:
+    def __init__(self):
+        self.settings = None
+
+    def set_settings(self, settings):
+        self.settings = settings
+
 class DataBase:
     """Класс Базы Данных"""
 
@@ -62,8 +69,20 @@ class DataBase:
     def get_hero(self, name_hero):
         """Получение героя"""
         with con.cursor() as cursor:
-            cursor.execute(f"""SELECT name_hero FROM user_classes WHERE name_hero = {name_hero}""")
-            return cursor.fetchall()
+            cursor.execute(f"""SELECT name_hero, class, id_account, lvl FROM user_classes WHERE name_hero = {name_hero}""")
+            result = cursor.fetchall()
+
+            heroes = {}
+
+            for row in result:
+                heroes = {
+                    'name hero': row[0],
+                    'class': row[1],
+                    'id account': row[2],
+                    'lvl': row[3]
+                }
+
+            return heroes
 
     def get_hero_list(self):
         with con.cursor() as cursor:
@@ -74,19 +93,25 @@ class DataBase:
             sorted_dict = {}
             for enum_row, row in enumerate(result):
 
-                if os.getenv('language') == 'english':
+                if settings_on_db.settings.get_language() == 'english':
 
                     sorted_dict[enum_row] = {
                         'name hero': 'None' if row[0] == '' else row[0],
                         'classes hero': row[1],
-                        'lvl': row[2]}
+                        'lvl': str(row[2]) + ' ' + 'lvl'}
                 else:
                     sorted_dict[enum_row] = {
                         'Имя персонажа': 'Отсутствует' if row[0] == '' else row[0],
                         'Класс героя': row[1],
-                        'Уровень': row[2]}
+                        'Уровень': str(row[2]) + ' ' + 'уровень'}
 
             return (return_dict for return_dict in sorted_dict.items())
+
+    def set_hero(self, number):
+        with con.cursor() as cursor:
+            cursor.execute(f'SELECT name_hero, class, lvl FROM user_classes')
+            result = cursor.fetchall()
+            cursor.close()
 
     def Zone(self, coording_x, coording_y):
         with con.cursor() as cursor:
@@ -110,3 +135,4 @@ class DataBase:
 
 # Инициализация Базы Данных
 database = DataBase()
+settings_on_db = Settings_on_db()

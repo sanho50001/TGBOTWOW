@@ -22,14 +22,14 @@ TGBOT = CommandsTelegram(bot)
 
 # Хандлеры для вызова команд
 
-# Хендлер для регистрации
-@bot.message_handler(commands=["reg"])
-def reg(message):
-    if wowgame:
-        user.set_id_account(message.from_user.id)
-    bot.send_message(message.from_user.id, 'Начинаем процесс регистрации...')
-    started = wowgame.Start()
-    started.cret(message.from_user.id)
+# # Хендлер для регистрации
+# @bot.message_handler(commands=["reg"])
+# def reg(message):
+#     if wowgame:
+#         user.set_id_account(message.from_user.id)
+#     bot.send_message(message.from_user.id, 'Начинаем процесс регистрации...')
+#     started = wowgame.Start()
+#     started.cret(message.from_user.id)
 
 
 # Хендлер старта
@@ -92,41 +92,36 @@ def callback_data(call):
                 time.sleep(1)
                 bot.register_next_step_handler(
                     call.message,
-                    wowgame.CreatingHero().welcom_step_one_creating_hero)
+                    wowgame.creatinghero.welcom_step_one_creating_hero)
             else:
                 bot.edit_message_text(chat_id=wowgame.user.get_id_account(), message_id=call.message.id, text='Введите имя персонажа')
                 time.sleep(1)
                 bot.register_next_step_handler(
                     call.message,
-                    wowgame.CreatingHero().welcom_step_one_creating_hero)
+                    wowgame.creatinghero.welcom_step_one_creating_hero)
 
         # Вызов настроек
         elif call.data == 'settings':
-            wowgame.BeginningStart().beginning_settings(call.message.from_user)
-
-        # Вызовы языков
-        elif call.data == 'ru':
-            settings.set_language('русский')
-            os.environ['language'] = settings.get_language()
-            bot.send_message(wowgame.user.get_id_account(),
-                             'Ваши языковые настройки были успешно изменены. Приятной игры!')
-
-        elif call.data == 'eng':
-            settings.set_language('english')
-            os.environ['language'] = settings.get_language()
-            bot.send_message(wowgame.user.get_id_account(),
-                             'Your language settings have been successfully changed. Have a nice game!')
+            wowgame.bigstart.beginning_settings(call.message.from_user)
 
         elif call.data == 'list_hero':
             wowgame.startgame.choice_hero_step_two()
 
+        # Вызовы языков
+        elif call.data in ('ru', 'eng'):
+            if call.data == 'ru':
+                settings.set_language('русский')
+            elif call.data == 'eng':
+                settings.set_language('english')
+            bot.send_message(wowgame.user.get_id_account(),
+                             settings.text_on_language_set())
         # Вызовы классов
-        elif call.data == (
-                'warrior' or 'hunter' or 'paladin'
-                or 'rogue' or 'priest' or 'shaman'
-                or 'mage' or 'warlock' or 'druid' or 'dk'
+        elif call.data in (
+                'warrior', 'hunter', 'paladin'
+                , 'rogue',  'priest',  'shaman'
+                ,  'mage',  'warlock',  'druid',  'dk'
         ):
-            wowgame.hero.hero.set_classes_hero(call.data)
+            wowgame.hero.hero.set_classes_hero(call.data.capitalize())
             wowgame.creatinghero.two_step_creating_hero(message=call.message)
 
         elif call.data == 'hit':
@@ -150,6 +145,7 @@ def callback_data(call):
 
 
         elif call.data == '1 Hero' or '1 Герой':
+
             pass
         elif call.data == '2 Hero' or '2 Герой':
             pass
