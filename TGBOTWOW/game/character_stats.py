@@ -28,6 +28,12 @@ class Stats:
         #     self.xp -= self.lvl * 200
         #     self.lvl_up()
 
+    def set_lvl(self, lvl):
+        self.lvl = lvl
+
+    def get_lvl(self):
+        return self.lvl
+
     def set_xp(self, xp):
         self.xp += xp
 
