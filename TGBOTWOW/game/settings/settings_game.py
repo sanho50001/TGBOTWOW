@@ -1,12 +1,19 @@
 class Settings:
     def __init__(self, language='english'):
         self.language = language
+        self.message_id = None
 
     def set_language(self, language):
         self.language = language
 
     def get_language(self):
         return self.language
+
+    def set_last_message_id(self, message_id):
+        self.message_id = message_id
+
+    def get_last_message_id(self,):
+        return self.message_id
 
     def beggining_settings(self):
         if self.get_language() == 'русский':
@@ -38,6 +45,18 @@ class Settings:
         else:
             return f'Register hero 📜'
 
+    def text_menu_button_game_set_name_hero(self):
+        if self.get_language() == 'русский':
+            return f'Введите имя персонажа'
+        else:
+            return f'Enter the name of the character'
+
+    def text_menu_button_choice_class_hero(self):
+        if self.get_language() == 'русский':
+            return f'Выберите ️класс героя'
+        else:
+            return f'Choice class hero️'
+
     def text_menu_button_game_settings(self):
         if self.get_language() == 'русский':
             return f'Настройки ⚙️'
@@ -50,7 +69,17 @@ class Settings:
         else:
             return f'List Heroes 🧾'
 
-    # def text_
+    def text_choice_action(self):
+        if self.get_language() == 'русский':
+            return f'Выберите'
+        else:
+            return f'Choice'
+
+    def text_on_func_choice_hero_step_two_hero(self):
+        if self.get_language() == 'русский':
+            return f'Герой'
+        else:
+            return f'Hero'
 
     def text_on_welcom_step_one_creating_hero(self):
         return f'{self.text_on_class_classes()}:\n'\
@@ -155,11 +184,11 @@ class Settings:
         else:
             return f'Choice action or write'
 
-    # def text_choice_hero(self):
-    #     if self.get_language() == 'русский':
-    #         return f'Выберите действие'
-    #     else:
-    #         return f'Choice action'
+    def text_movement_none_find(self):
+        if self.get_language() == 'русский':
+            return f'Вы ничего не нашли'
+        else:
+            return f"You didn't find anything"
 
     def text_commands(self):
         if self.get_language() == 'русский':
@@ -215,6 +244,23 @@ class Settings:
         else:
             return f'Right ➡️'
 
+    def text_on_db_name_hero(self):
+        if self.get_language() == 'русский':
+            return f'имя персонажа'
+        else:
+            return f'name hero️'
+
+    def text_on_db_classes_hero(self):
+        if self.get_language() == 'русский':
+            return f'класс героя'
+        else:
+            return f'classes hero'
+
+    def text_on_db_lvl_hero(self):
+        if self.get_language() == 'русский':
+            return f'уровень'
+        else:
+            return f'lvl'
 
 
 # Инициализация настроек

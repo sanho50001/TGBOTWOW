@@ -13,9 +13,6 @@ load_dotenv()
 bot = telebot.TeleBot(os.getenv('telebot_token'))
 print('Бот начал свою работу в', datetime.datetime.now().strftime('Дата: %Y %m %d Время: %H:%M:%S'), '.')
 
-
-user = User()
-
 # Отпределение команд бота
 TGBOT = CommandsTelegram(bot)
 
@@ -37,9 +34,9 @@ TGBOT = CommandsTelegram(bot)
 def start(message):
     """Обработчик комманды /start"""
 
-    user.set_id_account(message.from_user.id)
+    wowgame.user.set_id_account(message.from_user.id)
     print(f'Чат ID: {message.chat.id} | {message.from_user.first_name} {message.from_user.last_name}: {message.text}')
-    wowgame.StartGame().welcom(message=message)
+    wowgame.StartGame().welcom()
 
 
 # # Хендлер старта
@@ -56,17 +53,15 @@ def start(message):
 def get_text_messages(message):
     """Обработчик всех сообщений"""
     if wowgame:
-        user.set_id_account(message.from_user.id)
+        wowgame.user.set_id_account(message.from_user.id)
     wowgame.bigstart.r2()
-
-
 
 # хендлер принимающий любой вид текста которые не прошли проверку на команду
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     """Обработчик всех сообщений"""
     if wowgame:
-        user.set_id_account(message.from_user.id)
+        wowgame.user.set_id_account(message.from_user.id)
     TGBOT.getTextMessages(message=message)
 
 
@@ -77,34 +72,35 @@ def callback_data(call):
     """Функция callback_data перехвата всех вызовов которые возникают при нажатии inline кнопок
     Принимает все вызовы перехватом и проходит по условию, если условие сошлось - переходит дальше по фукнциям
     """
-    print(call.data)
+    # print(call.data)
+    # print(call.message)
     if call.message:
+        wowgame.user.set_id_account(call.message.chat.id)
+        wowgame.settings.set_last_message_id(call.message.id)
         # Вызов старта игры
         if call.data == 'startgame':
-            wowgame.startgame.choice_hero_step_one()
+            wowgame.startgame.choice_hero_step_one(message=call.message)
 
         # Вызов регистрации героя
         elif call.data == 'reghero':
+            markup_inline = wowgame.types.InlineKeyboardMarkup()
+            markup_inline.add(wowgame.types.InlineKeyboardButton(text=settings.text_menu_button_game_set_name_hero(),
+                                                                 callback_data='none'))
             time.sleep(1)
-
-            if settings.get_language() == 'english':
-                bot.edit_message_text(chat_id=wowgame.user.get_id_account(), message_id=call.message.id, text='Enter the name of the character', )
-                time.sleep(1)
-                bot.register_next_step_handler(
-                    call.message,
-                    wowgame.creatinghero.welcom_step_one_creating_hero)
-            else:
-                bot.edit_message_text(chat_id=wowgame.user.get_id_account(), message_id=call.message.id, text='Введите имя персонажа')
-                time.sleep(1)
-                bot.register_next_step_handler(
-                    call.message,
-                    wowgame.creatinghero.welcom_step_one_creating_hero)
+            bot.edit_message_text(chat_id=wowgame.user.get_id_account(), message_id=wowgame.settings.get_last_message_id(),
+                                  text=settings.text_menu_button_game_set_name_hero(), reply_markup=markup_inline)
+            # wowgame.creatinghero.creatinghero(message=call.message)
+            bot.register_next_step_handler(
+                call.message,
+                wowgame.creatinghero.creatinghero_step_one_creating_hero)
 
         # Вызов настроек
         elif call.data == 'settings':
-            wowgame.bigstart.beginning_settings(call.message.from_user)
+            # wowgame.user.set_id_account(call.message.chat.id)
+            wowgame.bigstart.beginning_settings()
 
         elif call.data == 'list_hero':
+            # user.set_id_account(call.message.chat.id)
             wowgame.startgame.choice_hero_step_two()
 
         # Вызовы языков
@@ -113,16 +109,17 @@ def callback_data(call):
                 settings.set_language('русский')
             elif call.data == 'eng':
                 settings.set_language('english')
-            bot.send_message(wowgame.user.get_id_account(),
-                             settings.text_on_language_set())
+
+            wowgame.bigstart.set_language()
+
         # Вызовы классов
         elif call.data in (
                 'warrior', 'hunter', 'paladin'
                 , 'rogue',  'priest',  'shaman'
-                ,  'mage',  'warlock',  'druid',  'dk'
+                , 'mage',  'warlock',  'druid',  'dk'
         ):
             wowgame.hero.hero.set_classes_hero(call.data.capitalize())
-            wowgame.creatinghero.two_step_creating_hero(message=call.message)
+            wowgame.creatinghero.creatinghero_two_step_creating_hero()
 
         elif call.data == 'hit':
             wowgame.battle.hit(hero=wowgame.hero.hero.get_name_hero(), npc=wowgame.npc.get_name_npc())
@@ -134,23 +131,20 @@ def callback_data(call):
         elif call.data == 'backpack':
             pass
         elif call.data == 'Up':
-            wowgame.movement.set_coord_y(0.5)
+            wowgame.movement.movement.set_coord_y(y=0.5)
             wowgame.movement.move()
         elif call.data == 'Down':
-            wowgame.movement.set_coord_y(-0.5)
+            wowgame.movement.movement.set_coord_y(y=(-0.5))
+            wowgame.movement.move()
         elif call.data == 'Left':
-            wowgame.movement.set_coord_x(-0.5)
+            wowgame.movement.movement.set_coord_x(x=(-0.5))
+            wowgame.movement.move()
         elif call.data == 'Right':
-            wowgame.movement.set_coord_x(0.5)
-
-
-        elif call.data == '1 Hero' or '1 Герой':
-
-            pass
-        elif call.data == '2 Hero' or '2 Герой':
-            pass
-        elif call.data == '3 Hero' or '3 Герой':
-            pass
+            wowgame.movement.movement.set_coord_x(x=0.5)
+            wowgame.movement.move()
+        elif call.data in ('Hero') or ('Герой'):
+            name_hero = call.data[8:]
+            wowgame.startgame.choice_hero_step_three(name_hero=name_hero)
         elif call.data == 'history':
             pass
 
