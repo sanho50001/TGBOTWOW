@@ -6,14 +6,12 @@
 class Hero:
     """Класс Героя"""
     def __init__(self):
-        self.id_account = ''
-        self.name_hero = ''  # имя персонажа
-        self.classes = '' #класс героя
+        self.id_account = None
+        self.name_hero = None  # имя персонажа
+        self.classes = None #класс героя
         self.status = 'Online'
         self.health_status = 'Alive'
         self.health_procent = 100
-        # self.stats = Stats()
-        # self.health = self.stats.hp
         # self.armor = Armor()
         # self.backpack = Backpack()
         # self.left_hand = LeftHand()
