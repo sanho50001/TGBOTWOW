@@ -23,10 +23,8 @@ import os
 from telebot import types
 import telebot
 
-
 load_dotenv()
 bot = telebot.TeleBot(os.getenv('telebot_token'))
-# user = User()
 
 
 class Heroes:
@@ -103,28 +101,44 @@ class Movemented:
     def __init__(self):
         self.movement = Movement()
 
-    def move(self):
-        # Инициализация кнопок для дальнейших действий
+    def move(self, message):
+        if game.get_game_status() == None:
+            game.set_game_status(status='start game')
+        if game.get_location() == None:
+            game.set_location(location='Dalaran')
+        print(game.get_game_status(), game.get_location())
+        print('115')
+        location = database.location(location=game.get_location())
 
-        location = database.Zone(coording_x=self.movement.get_coord_x(), coording_y=self.movement.get_coord_y())
-        # print('location =', location)
-        if location == None:
-            markup = types.ReplyKeyboardRemove()
+        zone = database.Zone(coording_x=self.movement.get_coord_x(),
+                             coording_y=self.movement.get_coord_y(),
+                             location=location)
 
-            bot.send_message(user.get_id_account(), settings.text_movement_none_find(), reply_markup=markup)
-            bot.delete_message(chat_id=user.get_id_account(), message_id=settings.get_last_message_id())
-            game.game()
+        if zone:
+            bot.send_message(user.get_id_account(), settings.text_on_game_where_is_location_hero() + f'{zone}')
+            bot.register_next_step_handler(message, game.game)
         else:
-            print(location)
+            bot.delete_message(chat_id=user.get_id_account(), message_id=settings.get_last_message_id())
+            markup_inline = types.InlineKeyboardMarkup()
+            markup_inline.add(
+                types.InlineKeyboardButton(text=settings.text_on_button_game_non_battle_left(), callback_data='Left'),
+                types.InlineKeyboardButton(text=settings.text_on_button_game_non_battle_up(), callback_data='Up'),
+                types.InlineKeyboardButton(text=settings.text_on_button_game_non_battle_down(), callback_data='Down'),
+                types.InlineKeyboardButton(text=settings.text_on_button_game_non_battle_right(), callback_data='Right'),
+            )
+            messages = bot.send_message(user.get_id_account(), settings.text_movement_none_find(), reply_markup=markup_inline)
+            settings.set_last_message_id(message_id=messages.message_id)
+            # bot.delete_message(chat_id=user.get_id_account(), message_id=settings.get_last_message_id())
+            print(zone)
 
-class BeginningStart:
 
-    def r2(self):
 
-        bot.send_message(user.get_id_account(), '<span style="color:blue">foo</span>')
+
+
+class SettingsGame:
+    """Класс настроек"""
 
     def beginning_settings(self):
-        # markup = types.ReplyKeyboardRemove()
         # вызов метода создания кнопки
         markup_inline = types.InlineKeyboardMarkup()
         # Кнопки с выбором
@@ -142,17 +156,19 @@ class BeginningStart:
         markup_inline.add(hide_keyboard)
         time.sleep(0.5)
         messages = bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
-                              text=settings.text_on_language_set(), reply_markup=None)
+                                         text=settings.text_on_language_set(), reply_markup=None)
         time.sleep(1)
         bot.delete_message(chat_id=user.get_id_account(), message_id=messages.message_id)
         startgame.welcom()
 
-class StartGame:
 
+class StartGame:
+    """Старт игры"""
     def __init__(self):
         self.call_func = 0
 
     def welcom(self):
+        """Стартовая страница приветствия"""
         # Добавляем пользователя в базу данных
         database.Create_User(id_account=user.get_id_account())
 
@@ -172,9 +188,11 @@ class StartGame:
         else:
             bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
                                   text=settings.text_commands(), reply_markup=markup_inline)
-        # bot.send_message(user.get_id_account(), settings.text_commands(), reply_markup=markup_inline)
+
 
     def choice_hero_step_one(self, message):
+        """Фаза выбора персонажа 1/3"""
+
         # вызов метода создания кнопки
         markup_inline = types.InlineKeyboardMarkup()
 
@@ -185,19 +203,14 @@ class StartGame:
         bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
                               text=settings.text_commands(), reply_markup=markup_inline)
 
-        # if self.call_func <= 0:
-        #     bot.send_message(user.get_id_account(), settings.text_commands(), reply_markup=markup_inline)
-        #     self.call_func += 1
-        # else:
-        #     bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
-        #                           text=settings.text_commands(), reply_markup=markup_inline)
-
 
     def choice_hero_step_two(self):
+        """Фаза выбора персонажа 2/3"""
         # вызов метода создания кнопки
         markup_inline = types.InlineKeyboardMarkup()
 
         text = {}
+
         # Взятие из базы данных всех персонажей аккаунта
         for numm, dicted in database.get_hero_list():
 
@@ -212,6 +225,7 @@ class StartGame:
             else:
                 text[f'{oper} {settings.text_on_func_choice_hero_step_two_hero()}, {name_hero}'] \
                     += f'{name_hero}, {class_hero}, {lvl_hero}'
+
         # Добавление персонажей в выбор через кнопку
         for hero in text:
             markup_inline.add(types.InlineKeyboardButton(text=f'{text[hero]}', callback_data=f'{hero}', ),)
@@ -219,17 +233,9 @@ class StartGame:
         messages = bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
                                          text=settings.text_choice_action(), reply_markup=markup_inline)
         settings.set_last_message_id(message_id=messages.message_id)
-        # # Если до этого был вызов этой функции то происходит изменение прошлого сообщения, если не было вызова то
-        # # отправляется обычное сообщение для дальнейшшего измнения
-        # if self.call_func <= 0:
-        #     bot.send_message(user.get_id_account(), settings.text_choice_action(), reply_markup=markup_inline)
-        #     self.call_func += 1
-        # else:
-        #     bot.edit_message_text(chat_id=user.get_id_account(), message_id=settings.get_last_message_id(),
-        #                           text=settings.text_choice_action(), reply_markup=markup_inline)
 
-    def choice_hero_step_three(self, name_hero):
-        """Последняя функция выбора персонажа."""
+    def choice_hero_step_three(self, name_hero, message):
+        """Последняя функция выбора персонажа. 3/3"""
         # Происходит взятие данных персонажа в БД
         heroes = database.get_hero(name_hero=name_hero)
         # Установка значений персонажа после взятия его из БД
@@ -239,7 +245,7 @@ class StartGame:
         hero.stats.set_lvl(heroes.get('lvl'))
         bot.delete_message(chat_id=user.get_id_account(), message_id=settings.get_last_message_id())
         # Старт игры, переход к функциям игры
-        game.game()
+        game.game(message=message)
 
 # class LeftHand(Weapon):
 #     """Класс левой руки"""
@@ -266,7 +272,9 @@ class Backpack:
 
 
 class CreatingHero:
+    """Класс инициализации создания персонажа"""
     def __init__(self):
+        """Инициализация данных"""
         creat_hero.set_bot(bot=bot)
         creat_hero.set_settings(settings=settings)
         creat_hero.set_hero(hero=hero)
@@ -276,73 +284,36 @@ class CreatingHero:
         creat_hero.set_startgame(startgame=startgame)
         creat_hero.set_database(database=database)
 
-
     def creatinghero_step_one_creating_hero(self, message=None):
+        """Первый этап создания персонажа"""
         creat_hero.step_one_creating_hero(message=message)
 
     def creatinghero_two_step_creating_hero(self, message=None):
+        """Второй этап создания персонажа"""
         creat_hero.two_step_creating_hero()
 
-    # def welcom_step_one_creating_hero(self, message):
-    #     """Этап создания персонажа. 1/2 этап."""
-    #     # print(message)
-    #     hero.hero.set_name_hero(message.text)  #Установка имени персонажа
-    #
-    #     # вызов метода создания кнопки
-    #     markup_inline = types.InlineKeyboardMarkup()
-    #
-    #     # Кнопки инлайн(под сообщением выпадающие) классов
-    #     markup_inline.add(
-    #         types.InlineKeyboardButton(text=settings.text_on_class_warrior(), callback_data='warrior'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_hunter(), callback_data='hunter'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_paladin(), callback_data='paladin'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_rogue(), callback_data='rogue'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_priest(), callback_data='priest'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_shaman(), callback_data='shaman'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_mage(), callback_data='mage'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_warlock(), callback_data='warlock'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_druid(), callback_data='druid'),
-    #         types.InlineKeyboardButton(text=settings.text_on_class_death_knight(), callback_data='dk'),
-    #     )
-    #     # Отправка сообщения и кнопок инлайн
-    #     messages = bot.send_message(user.get_id_account(),
-    #                                 settings.text_menu_button_choice_class_hero(),
-    #                                 reply_markup=markup_inline)
-    #     settings.set_last_message_id(messages.message_id)
-    #     # Функция необходимая для сообщений в чате (если пользователь захотел сам ввести)
-    #     bot.register_next_step_handler(message, self.two_step_creating_hero)
-    #
-    # def two_step_creating_hero(self):
-    #     """Второй этап создания персонажа. 2/2 этап."""
-    #     messages = bot.send_message(user.get_id_account(),
-    #                      settings.text_on_welcom_step_two_creating_hero())
-    #     settings.set_last_message_id(messages.message_id)
-    #     # создание героя в базе данных
-    #     database.Create_Hero(
-    #         name_hero=hero.hero.get_name_hero(),
-    #         classes=hero.hero.get_classes_hero(),
-    #         id_account=user.get_id_account()
-    #     )
-    #     time.sleep(1)
-    #     startgame.welcom()
-    #
-    # #     bot.register_next_step_handler(message, self.three_step_creating_hero)
-    # # def three_step_creating_hero(self, message):
-    # #     bot.send_message(user.get_id_account(), settings.)
 
 class Game:
+    """Класс игры"""
+
     def __init__(self):
         self.game_status = None
+        self.location = None
 
-    def set_game_status(self):
-        pass
+    def set_game_status(self, status):
+        self.game_status = status
 
     def get_game_status(self):
-        pass
+        return self.game_status
 
-    """Класс игры"""
+    def set_location(self, location):
+        self.location = location
+
+    def get_location(self):
+        return self.location
+
     # Функция игры.
-    def game(self):
+    def game(self, message):
         # Инициализация кнопок для дальнейших действий
         markup_inline = types.InlineKeyboardMarkup()
         """Функция игры.
@@ -357,6 +328,12 @@ class Game:
 
         # Если фаза битвы == False, происходит фаза ходьбы
         else:
+            if self.game_status:
+                movement.move(message=message)
+            elif self.game_status == 'start game':
+                pass
+            else:
+                self.set_game_status(status='start game')
             # создание кнопки и добавление туда кнопок.
             markup_inline.add(
                 types.InlineKeyboardButton(text=settings.text_on_button_game_non_battle_left(), callback_data='Left'),
@@ -375,7 +352,7 @@ class Game:
 # step1
 startgame = StartGame()
 # step2
-bigstart = BeginningStart()
+settings_game = SettingsGame()
 # step3
 game = Game()
 # step4

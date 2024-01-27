@@ -262,6 +262,19 @@ class Settings:
         else:
             return f'lvl'
 
+    def text_on_game_where_is_location_hero(self):
+        if self.get_language() == 'русский':
+            return f'Вы находитесь в локации '
+        else:
+            return f'You are in a location '
+
+
+    def text_on_game_where_is_hero(self):
+        if self.get_language() == 'русский':
+            return f'в зоне '
+        else:
+            return f'in the zone '
+
 
 # Инициализация настроек
 settings = Settings()

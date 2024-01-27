@@ -39,23 +39,6 @@ def start(message):
     wowgame.StartGame().welcom()
 
 
-# # Хендлер старта
-# @bot.message_handler(commands=['start'])
-# def start(message):
-#     """Обработчик комманды /start"""
-#
-#     user.set_id_account(message.from_user.id)
-#     print(f'Чат ID: {message.chat.id} | {message.from_user.first_name} {message.from_user.last_name}: {message.text}')
-#     wowgame.StartGame().welcom(message=message)
-
-# хендлер принимающий любой вид текста которые не прошли проверку на команду
-@bot.message_handler(commands=['test'])
-def get_text_messages(message):
-    """Обработчик всех сообщений"""
-    if wowgame:
-        wowgame.user.set_id_account(message.from_user.id)
-    wowgame.bigstart.r2()
-
 # хендлер принимающий любой вид текста которые не прошли проверку на команду
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
@@ -97,7 +80,7 @@ def callback_data(call):
         # Вызов настроек
         elif call.data == 'settings':
             # wowgame.user.set_id_account(call.message.chat.id)
-            wowgame.bigstart.beginning_settings()
+            wowgame.settings_game.beginning_settings()
 
         elif call.data == 'list_hero':
             # user.set_id_account(call.message.chat.id)
@@ -110,7 +93,7 @@ def callback_data(call):
             elif call.data == 'eng':
                 settings.set_language('english')
 
-            wowgame.bigstart.set_language()
+            wowgame.settings_game.set_language()
 
         # Вызовы классов
         elif call.data in (
@@ -132,19 +115,19 @@ def callback_data(call):
             pass
         elif call.data == 'Up':
             wowgame.movement.movement.set_coord_y(y=0.5)
-            wowgame.movement.move()
+            wowgame.movement.move(message=call.message)
         elif call.data == 'Down':
             wowgame.movement.movement.set_coord_y(y=(-0.5))
-            wowgame.movement.move()
+            wowgame.movement.move(message=call.message)
         elif call.data == 'Left':
             wowgame.movement.movement.set_coord_x(x=(-0.5))
-            wowgame.movement.move()
+            wowgame.movement.move(message=call.message)
         elif call.data == 'Right':
             wowgame.movement.movement.set_coord_x(x=0.5)
-            wowgame.movement.move()
+            wowgame.movement.move(message=call.message)
         elif call.data in ('Hero') or ('Герой'):
             name_hero = call.data[8:]
-            wowgame.startgame.choice_hero_step_three(name_hero=name_hero)
+            wowgame.startgame.choice_hero_step_three(name_hero=name_hero, message=call.message)
         elif call.data == 'history':
             pass
 

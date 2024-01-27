@@ -107,18 +107,43 @@ class DataBase:
             result = cursor.fetchall()
             cursor.close()
 
-    def Zone(self, coording_x, coording_y):
+    def location(self, location):
         with con.cursor() as cursor:
+            cursor.execute(f"""SELECT Location FROM location WHERE Location = '{location}'""")
+
+            result = cursor.fetchone()
+            # Условие если в БД не нашлась запись, то создается.
+            if result is None:
+                return None
+            else:
+                return result[0]
+
+
+    def Zone(self, coording_x, coording_y, location):
+        with con.cursor() as cursor:
+            print(location)
             print('x=', coording_x, ' y=', coording_y)
-            print('Zone', type(coording_y))
-            t = cursor.execute(f"""SELECT NameLocation, NameZone FROM zone WHERE coord_x = {float(coording_x)} and coord_y = {float(coording_y)}""")
-            print(t)
-            result = cursor.fetchall()
+            result = None
+            if settings_on_db.settings.get_language() == 'Русский':
+                cursor.execute(
+                    f"""SELECT RuNameLocation, RuNameZone FROM zone
+                     WHERE coord_x = {coording_x} and
+                     coord_y = {coording_y}  and
+                     Location = '{location}'""")
+                result = cursor.fetchall()
+            else:
+                cursor.execute(f"""SELECT Location, NameZone FROM zone 
+                WHERE coord_x = {coording_x} and
+                 coord_y = {coording_y} and
+                 Location = '{location}'""")
+                result = cursor.fetchall()
+
             # Условие если в БД не нашлась запись, то создается.
             if result is None:
                 return None
             else:
                 return result
+
     def Spot(self):
         pass
 
